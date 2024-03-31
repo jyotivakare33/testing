@@ -1,6 +1,18 @@
 import Sidebar from "./Sidebar";
+import React, { useState, useEffect } from "react";
 
 const Reviews = () => {
+  const [reviewsData, setReviewsData] = useState([]);
+
+  useEffect(() => {
+    fetch("/reviewsData")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        setReviewsData(data);
+      });
+  }, []);
+
   return (
     <div className="container">
       <div className="flex-1" />
@@ -59,11 +71,10 @@ const Reviews = () => {
         <div className=" py-3 text-start text-m font-bold text-black uppercase">
           Search Results{" "}
         </div>
-
         <div className="flex flex-col">
           <div className="-m-1.5 overflow-x-auto">
             <div className="p-1.5 min-w-full inline-block align-middle">
-              <div className="overflow-hidden">
+              <div className="border rounded-lg overflow-hidden dark:border-gray-700">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead>
                     <tr>
@@ -94,7 +105,23 @@ const Reviews = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700 text-left">
-                    <tr>
+                    {reviewsData.map((review) => (
+                      <tr key={review.trip_uid}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                          {review.trip_id}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                          {review.fed_grantee_id}
+                        </td>
+                        <td className=" py-4 whitespace-nowrap  w-44 text-sm text-gray-800 dark:text-gray-200">
+                          {review.Name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
+                          {review.review_date}
+                        </td>
+                      </tr>
+                    ))}
+                    {/* <tr>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
                         01234F2C{" "}
                       </td>
@@ -107,35 +134,7 @@ const Reviews = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
                         Page U1/01/24 - 1/05/24RL
                       </td>
-                    </tr>
-                    <tr>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                        01234F2C{" "}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                        98765432{" "}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                        Kids Are First, Inc.{" "}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                        Page U1/01/24 - 1/05/24RL
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                        01234F2C{" "}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                        98765432
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                        Kids Are First, Inc.{" "}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                        Page U1/01/24 - 1/05/24RL
-                      </td>
-                    </tr>
+                    </tr> */}
                   </tbody>
                 </table>
               </div>

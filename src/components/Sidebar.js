@@ -26,7 +26,7 @@ const Sidebar = () => {
           <li>
             <a
               className="flex items-center gap-x-3.5 py-2 px-2.5 bg-black text-white text-sm rounded-lg hover:bg-black hover:text-white dark:bg-gray-900 font-semibold dark:text-white dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-              href="#"
+              onClick={() => navigate("/Reviews")}
             >
               <svg
                 className="size-4"
