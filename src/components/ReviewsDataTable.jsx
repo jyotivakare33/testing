@@ -1,7 +1,6 @@
 import DataTable from "react-data-table-component";
 
-const Test = (props) => {
-  console.log(props);
+const ReviewsDataTable = (props) => {
   const columns = [
     {
       name: "Review ID",
@@ -42,4 +41,4 @@ const Test = (props) => {
   return <DataTable columns={columns} data={employees.accounting} pagination />;
 };
 
-export default Test;
+export default ReviewsDataTable;

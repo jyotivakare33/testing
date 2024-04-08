@@ -1,17 +1,46 @@
 import Sidebar from "./Sidebar";
+import ReviewsDataTable from "./ReviewsDataTable";
+
 import React, { useState, useEffect } from "react";
 
 const Reviews = () => {
   const [reviewsData, setReviewsData] = useState([]);
+  const [searchresults, setSearchResults] = useState(false);
+  const [email, setEmail] = useState("");
+  const [searchType, setSearchType] = useState("");
+
+  const [validEmail, setValidEmail] = useState(false);
+
+  const handleEmailChange = (e) => {
+    const enteredEmail = e.target.value;
+    const emailRegex = /^([a-zA-Z0-9]+)$/;
+
+    setEmail(enteredEmail);
+    setValidEmail(emailRegex.test(enteredEmail));
+  };
+
+  const handleSelectChange = (event) => {
+    setSearchType(event.target.value);
+  };
+
+  const handleSearchResults = () => {
+    console.log(searchType);
+    (searchType === "reviewid" || searchType === "granteename") && validEmail
+      ? setSearchResults(true)
+      : setSearchResults(false);
+  };
+
+  const fetchData = async () => {
+    const response = await fetch("/reviewsData");
+    const data = await response.json();
+    setReviewsData(data);
+  };
 
   useEffect(() => {
-    fetch("/reviewsData")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setReviewsData(data);
-      });
+    fetchData();
   }, []);
+
+  searchresults ? console.log(true) : console.log(false);
 
   return (
     <div className="container">
@@ -46,27 +75,42 @@ const Reviews = () => {
           </div>
 
           <div className="grid grid-flow-rows-1 grid-flow-col gap-x-10 mt-4 justify-evenly w-full items-start	">
-            <input
-              type="text"
-              className="py-3 px-4 block w-96 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
-              placeholder="This is placeholder"
-            />
-            <p className=" text-start text-xs font-medium text-black uppercase">
+            <div>
+              <div className="relative">
+                <select
+                  id="select-1"
+                  className=" border border-gray-200 py-3 px-4 pe-16 block w-full rounded-lg text-sm disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                  value={searchType}
+                  onChange={handleSelectChange}
+                >
+                  <option selected="">Open this select menu</option>
+                  <option value="reviewid">Review Id</option>
+                  <option value="granteename">Grantee Name</option>
+                </select>
+              </div>
+            </div>
+
+            {/* <p className=" text-start text-xs font-medium text-black uppercase">
               OR
-            </p>
+            </p> */}
             <input
               type="text"
               className="py-3 px-4 block w-96 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
               placeholder="This is placeholder"
+              value={email}
+              onChange={handleEmailChange}
             />
+
             <button
               type="button"
               className="py-2 px-10 align-end inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-gray-800 text-white hover:bg-gray-900 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:bg-white dark:text-gray-800"
+              onClick={handleSearchResults}
             >
               Search
             </button>
           </div>
         </div>
+        {validEmail ? null : <span>Please enter a valid value</span>}
 
         <div className=" py-3 text-start text-m font-bold text-black uppercase">
           Search Results{" "}
@@ -75,68 +119,11 @@ const Reviews = () => {
           <div className="-m-1.5 overflow-x-auto">
             <div className="p-1.5 min-w-full inline-block align-middle">
               <div className="border rounded-lg overflow-hidden dark:border-gray-700">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead>
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
-                      >
-                        Review ID
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
-                      >
-                        Grantee ID
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase"
-                      >
-                        Grantee Name
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase"
-                      >
-                        Reviews Date
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700 text-left">
-                    {reviewsData.map((review) => (
-                      <tr key={review.trip_uid}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                          {review.trip_id}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                          {review.fed_grantee_id}
-                        </td>
-                        <td className=" py-4 whitespace-nowrap  w-44 text-sm text-gray-800 dark:text-gray-200">
-                          {review.Name}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                          {review.review_date}
-                        </td>
-                      </tr>
-                    ))}
-                    {/* <tr>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                        01234F2C{" "}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                        98765432{" "}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                        Kids Are First, Inc.{" "}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                        Page U1/01/24 - 1/05/24RL
-                      </td>
-                    </tr> */}
-                  </tbody>
-                </table>
+                {searchresults ? (
+                  <ReviewsDataTable reviewsData={reviewsData} />
+                ) : (
+                  <div className="w-full">There is no Data to display</div>
+                )}
               </div>
             </div>
           </div>
