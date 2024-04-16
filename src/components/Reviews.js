@@ -1,22 +1,26 @@
-import Sidebar from "./Sidebar";
 import ReviewsDataTable from "./ReviewsDataTable";
+import Sidebar from "./Sidebar";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import InputAuto from "./InputAuto";
 
 const Reviews = () => {
   const [reviewsData, setReviewsData] = useState([]);
   const [searchresults, setSearchResults] = useState(false);
-  const [email, setEmail] = useState("");
+  // const [, setEmail] = useState("");
+  const [granteeIds, setGranteeIds] = useState([]);
   const [searchType, setSearchType] = useState("");
 
-  const [validEmail, setValidEmail] = useState(false);
+  // const [, setValidEmail] = useState(false);
+  const getSelectedVal = (value) => {
+    console.log(value);
+  };
 
-  const handleEmailChange = (e) => {
-    const enteredEmail = e.target.value;
-    const emailRegex = /^([a-zA-Z0-9]+)$/;
-
-    setEmail(enteredEmail);
-    setValidEmail(emailRegex.test(enteredEmail));
+  const handleEmailChange = () => {
+    // const enteredEmail = e.target.value;
+    // const emailRegex = /^([a-zA-Z0-9]+)$/;
+    // setEmail(enteredEmail);
+    // setValidEmail(emailRegex.test(enteredEmail));
   };
 
   const handleSelectChange = (event) => {
@@ -25,7 +29,7 @@ const Reviews = () => {
 
   const handleSearchResults = () => {
     console.log(searchType);
-    (searchType === "reviewid" || searchType === "granteename") && validEmail
+    searchType === "reviewid" || searchType === "granteename"
       ? setSearchResults(true)
       : setSearchResults(false);
   };
@@ -34,13 +38,17 @@ const Reviews = () => {
     const response = await fetch("/reviewsData");
     const data = await response.json();
     setReviewsData(data);
+    console.log(data);
+    const extractedIds = data.recordsets[0].map((item) => item.fed_grantee_id);
+    console.log(extractedIds);
+    setGranteeIds(extractedIds);
   };
 
   useEffect(() => {
     fetchData();
   }, []);
 
-  searchresults ? console.log(true) : console.log(false);
+  const data = granteeIds;
 
   return (
     <div className="container">
@@ -89,18 +97,22 @@ const Reviews = () => {
                 </select>
               </div>
             </div>
-
             {/* <p className=" text-start text-xs font-medium text-black uppercase">
               OR
             </p> */}
-            <input
+            {/* <input
               type="text"
               className="py-3 px-4 block w-96 border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
               placeholder="This is placeholder"
               value={email}
               onChange={handleEmailChange}
-            />
-
+            /> */}
+            <InputAuto
+              pholder="Keyword..."
+              data={data}
+              onSelected={getSelectedVal}
+              onChange={handleEmailChange}
+            />{" "}
             <button
               type="button"
               className="py-2 px-10 align-end inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-gray-800 text-white hover:bg-gray-900 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:bg-white dark:text-gray-800"
@@ -110,7 +122,7 @@ const Reviews = () => {
             </button>
           </div>
         </div>
-        {validEmail ? null : <span>Please enter a valid value</span>}
+        {/* {validEmail ? null : <span>Please enter a valid value</span>} */}
 
         <div className=" py-3 text-start text-m font-bold text-black uppercase">
           Search Results{" "}
